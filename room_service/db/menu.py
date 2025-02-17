@@ -1,3 +1,4 @@
+"""Mocking a database for menu items and remaining quantities."""
 from room_service.models.menu import MenuItem
 
 MENU_ITEMS: dict[str, MenuItem] = {

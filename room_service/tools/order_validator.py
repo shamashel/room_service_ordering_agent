@@ -14,18 +14,13 @@ from room_service.models.order_validation import (
     InvalidItem,
 )
 from room_service.db.menu import MENU_ITEMS
-from room_service.util import partition
+from room_service.util import calculate_order_details, partition
 
 class ItemValidationResult(NamedTuple):
   """NamedTuple representing the result of validating an order item."""
   is_valid: bool
   valid_item: Optional[ValidItem]
   invalid_item: Optional[InvalidItem]
-
-class OrderDetails(NamedTuple):
-  """NamedTuple representing the details of a validated order."""
-  total_price: float
-  max_preparation_time: int
 
 
 class OrderValidatorTool(BaseTool):
@@ -126,23 +121,6 @@ class OrderValidatorTool(BaseTool):
       None,
     )
 
-  def _calculate_order_details(self, valid_items: list[ValidItem]) -> OrderDetails:
-    """Calculate total price and preparation time for valid items.
-
-    Returns:
-      OrderDetails: (total_price, max_preparation_time)
-    """
-    total_price = 0.0
-    max_prep_time = 0
-
-    for item in valid_items:
-      assert item.name in MENU_ITEMS, f"Item {item.name} not found in menu when calculating order details. Ensure valid_items only contained validated items."
-      menu_item = MENU_ITEMS[item.name]
-      total_price += menu_item.price * item.valid_quantity
-      max_prep_time = max(max_prep_time, menu_item.preparation_time)
-
-    return OrderDetails(total_price, max_prep_time)
-
   def _run(self, order: Order) -> OrderValidationResult:
     """Run order validation.
 
@@ -172,7 +150,7 @@ class OrderValidatorTool(BaseTool):
     # Construct response based on validation results
     if is_valid_room and not invalid_items:
       # All valid - happy path
-      total_price, prep_time = self._calculate_order_details(valid_items)
+      total_price, prep_time = calculate_order_details(valid_items)
 
       details = ValidationDetails(
         valid_room=str(order.room), valid_items=valid_items

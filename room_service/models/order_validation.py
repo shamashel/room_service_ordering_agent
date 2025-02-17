@@ -51,7 +51,7 @@ class OrderValidationResult(BaseModel):
     status: Status = Field(..., description="Status of validation (Success/Error)")
     response: str = Field(..., description="Human-readable response message")
     details: ValidationDetails | ValidationError = Field(..., description="Validation details including room and items")
-    total_price: float | None = Field(default=None, ge=0, description="Total price of the order (for successful orders)")
+    total_price: str | None = Field(default=None, description="Total price of the order (for successful orders)")
     preparation_time: int | None = Field(default=None, ge=0, description="Estimated preparation time in minutes (for successful orders)")
 
     @field_validator('details')
