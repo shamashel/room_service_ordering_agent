@@ -11,6 +11,7 @@ class OrderItem(BaseModel):
   quantity: int = Field(..., gt=0, description="Quantity of the item")
   modifications: list[str] = Field(default_factory=list, description="List of modifications requested")
 
+
 class Order(BaseModel):
   """Represents a complete room service order."""
   room: int = Field(ge=100, le=399, description="Room number")
@@ -23,7 +24,7 @@ class OrderDetails(NamedTuple):
 
 class GoodOrderResponse(BaseModel):
   """Response from the Room Service API when the order is successful."""
-  status = Status.SUCCESS
+  status: Status = Status.SUCCESS
   message: str
   order_id: str
   estimated_delivery_time_minutes: int
@@ -31,7 +32,7 @@ class GoodOrderResponse(BaseModel):
 
 class BadOrderResponse(BaseModel):
   """Response from the Room Service API when the order is not successful."""
-  status = Status.ERROR
+  status: Status = Status.ERROR
   message: str
 
 OrderResponse = GoodOrderResponse | BadOrderResponse

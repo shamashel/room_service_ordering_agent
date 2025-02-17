@@ -1,9 +1,10 @@
 import textwrap
 from langchain_openai import ChatOpenAI
 from room_service.tools import TOOLS
+from room_service.env import ENV
 
-LLM = ChatOpenAI(model="gpt-4o-mini")
-LLM_WITH_TOOLS = LLM.bind_tools(TOOLS)
+TOOL_CALLING_LLM = ChatOpenAI(model="gpt-4o-mini", api_key=ENV.OPENAI_API_KEY).bind_tools(TOOLS)
+
 SYSTEM_PROMPT = textwrap.dedent("""
   You are a senior room service attendant at a 5-star hotel. You are responsible for taking orders from guests and ensuring they are processed correctly.
 

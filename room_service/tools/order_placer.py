@@ -1,28 +1,41 @@
-from typing import Annotated
+from typing import Annotated, Type
 from langchain.tools import BaseTool
 from langchain_core.messages import ToolMessage
 from langchain_core.tools import InjectedToolCallId
 from langgraph.prebuilt.tool_node import InjectedState
 from langgraph.types import Command
+from pydantic import BaseModel, Field
 from room_service.services.room_service_api import RoomServiceAPI
 from room_service.models.order import GoodOrderResponse
 from room_service.models.state import OrderState
+import logging
+
+logger = logging.getLogger(__name__)
+
+class OrderPlacerSchema(BaseModel):
+  """Schema for the Order Placer tool."""
+  tool_call_id: Annotated[str, InjectedToolCallId]
+  state: Annotated[OrderState, InjectedState]
 
 class OrderPlacerTool(BaseTool):
   """LangChain tool for placing a validated order with the room service system."""
 
-  name = "order_placer"
-  description = "Places a validated order with the room service system. Any order should first be validated with the `order_validator` tool and then confirmed by the user."
-  
+  name: str = "order_placer"
+  description: str = "Only call this tool if the order has already been validated and the user has confirmed the order."
+  args_schema: Type[BaseModel] = OrderPlacerSchema
+  api: RoomServiceAPI = Field(default_factory=RoomServiceAPI)
+
   def __init__(self):
     super().__init__()
-    self.api = RoomServiceAPI()
   
   def _run(self, tool_call_id: Annotated[str, InjectedToolCallId], state: Annotated[OrderState, InjectedState]) -> Command:
-    if not state["validated_order"] or not state["validation_result"]:
+    logger.info("Attempting to place order")
+    validated_order, validation_result = state.get("validated_order"), state.get("validation_result")
+    if not validated_order or not validation_result:
       raise ValueError("Cannot place order - no validated order in state. Ensure the order has been validated with the `order_validator` tool.")
       
-    result = self.api.place_order(state["validated_order"])
+    logger.info(f"Placing order: {validated_order}")
+    result = self.api.place_order(validated_order)
     if isinstance(result, GoodOrderResponse):
       return Command(
         update={

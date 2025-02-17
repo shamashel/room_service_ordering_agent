@@ -6,6 +6,8 @@ from pydantic import BaseModel, Field, field_validator
 
 from room_service.models.general import Status
 
+
+
 class ValidItem(BaseModel):
     """Represents a validated order item."""
     name: str = Field(..., description="Name of the menu item")

@@ -1,10 +1,11 @@
 """Tool for validating room service orders."""
 
-from typing import Annotated, NamedTuple, Optional
+from typing import Annotated, NamedTuple, Optional, Type
 from langchain.tools import BaseTool
 from langchain_core.messages import ToolMessage
 from langchain_core.tools import InjectedToolCallId
 from langgraph.types import Command
+from pydantic import BaseModel
 
 from room_service.models.general import Status
 from room_service.models.order import Order, OrderItem
@@ -18,6 +19,14 @@ from room_service.models.order_validation import (
 )
 from room_service.db.menu import MENU_ITEMS
 from room_service.util import calculate_order_details, partition
+import logging
+
+logger = logging.getLogger(__name__)
+
+class OrderValidationSchema(BaseModel):
+  """Schema for the Order Validator tool."""
+  order: Order
+  tool_call_id: Annotated[str, InjectedToolCallId]
 
 class ItemValidationResult(NamedTuple):
   """NamedTuple representing the result of validating an order item."""
@@ -29,11 +38,11 @@ class ItemValidationResult(NamedTuple):
 class OrderValidatorTool(BaseTool):
   """LangChain tool for validating room service orders."""
 
-  name = "order_validator"
-  description = (
-      "Validates a room service order against menu items and room constraints"
+  name: str = "order_validator"
+  description: str = (
+      "Validates a room service order against menu items and room constraints. This tool should be called only once per order."
   )
-  args_schema = Order
+  args_schema: Type[BaseModel] = OrderValidationSchema
 
   def __init__(self):
     """Initialize the OrderValidatorTool. Explicitly doing this so basedpyright realizes we don't need params."""
@@ -134,6 +143,7 @@ class OrderValidatorTool(BaseTool):
     Returns:
       OrderValidationResult: The validation result
     """
+    logger.info(f"Validating order: {order} for tool call id {tool_call_id}")
     # Validate room number
     is_valid_room = self._validate_room(order.room)
 
@@ -172,7 +182,7 @@ class OrderValidatorTool(BaseTool):
 
       result = OrderValidationResult(
         status=Status.SUCCESS,
-        response=f"The requested order of {items_summary}, will cost {total_price} and can be prepared in approximately {prep_time} minutes. Inform the user of this and request their confirmation to place this order.",
+        response=f"The requested order of {items_summary}, will cost {total_price} and can be prepared in approximately {prep_time} minutes. Inform the user of this and request their confirmation to place this order. The `order_placer` tool may be used to place this order after confirmation.",
         details=details,
         total_price=total_price,
         preparation_time=prep_time,

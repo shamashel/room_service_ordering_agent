@@ -4,10 +4,17 @@ version = "0.1.0"
 description = ""
 authors = ["Mike Gabriel <michaelgabrielinfosec@gmail.com>"]
 readme = "README.md"
+packages = [
+  { include = "room_service" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.12"
 pydantic = "^2.10.6"
+pydantic-settings = "^2.7.1"
+langgraph = "^0.2.73"
+langchain-core = "^0.3.35"
+langchain-openai = "^0.3.6"
 
 
 [tool.poetry.group.test.dependencies]
