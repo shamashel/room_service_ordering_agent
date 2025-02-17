@@ -1,4 +1,5 @@
 """Mocking a database for menu items and remaining quantities."""
+import json
 from room_service.models.menu import MenuItem
 
 MENU_ITEMS: dict[str, MenuItem] = {
@@ -177,3 +178,5 @@ MENU_ITEMS: dict[str, MenuItem] = {
     available_quantity=0,
   ),
 }
+
+MENU_ITEMS_STRING = json.dumps({key: item.model_dump_json() for key, item in MENU_ITEMS.items()})

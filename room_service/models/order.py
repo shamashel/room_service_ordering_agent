@@ -15,7 +15,7 @@ class OrderItem(BaseModel):
 class Order(BaseModel):
   """Represents a complete room service order."""
   room: int = Field(ge=100, le=399, description="Room number")
-  items: list[OrderItem] = Field(..., min_length=1, description="List of items in the order")
+  items: list[OrderItem] = Field(..., min_length=1, description="List of items in the order. May contain multiple items.")
 
 class OrderDetails(NamedTuple):
   """NamedTuple representing the details of a validated order."""

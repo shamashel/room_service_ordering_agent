@@ -109,7 +109,7 @@ class OrderValidatorTool(BaseTool):
 
     # Check if provided modifications are valid
     if item.modifications:
-      invalid_mods, valid_mods = partition(lambda x: x in menu_item.available_modifications, item.modifications)
+      valid_mods, invalid_mods = partition(lambda x: x in menu_item.available_modifications, item.modifications)
       if invalid_mods:
         return ItemValidationResult(
           False,
