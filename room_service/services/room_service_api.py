@@ -3,7 +3,6 @@
 import random
 import time
 
-import pydantic
 
 from room_service.db.orders import get_order_id
 from room_service.models.order import BadOrderResponse, GoodOrderResponse, Order, OrderResponse

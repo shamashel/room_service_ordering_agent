@@ -1,7 +1,10 @@
 """Tool for validating room service orders."""
 
-from typing import NamedTuple, Optional
+from typing import Annotated, NamedTuple, Optional
 from langchain.tools import BaseTool
+from langchain_core.messages import ToolMessage
+from langchain_core.tools import InjectedToolCallId
+from langgraph.types import Command
 
 from room_service.models.general import Status
 from room_service.models.order import Order, OrderItem
@@ -77,7 +80,6 @@ class OrderValidatorTool(BaseTool):
           name=item.name,
           valid_quantity=menu_item.available_quantity,
           invalid_quantity=item.quantity - menu_item.available_quantity,
-          valid_modifications=item.modifications,
           reason=InvalidItemReasons.OUT_OF_STOCK,
         ),
       )
@@ -116,12 +118,14 @@ class OrderValidatorTool(BaseTool):
     return ItemValidationResult(
       True,
       ValidItem(
-        name=item.name, valid_quantity=item.quantity, valid_modifications=item.modifications
+        name=item.name,
+        valid_quantity=item.quantity,
+        valid_modifications=item.modifications
       ),
       None,
     )
 
-  def _run(self, order: Order) -> OrderValidationResult:
+  def _run(self, tool_call_id: Annotated[str, InjectedToolCallId], order: Order) -> Command:
     """Run order validation.
 
     Args:
@@ -166,12 +170,22 @@ class OrderValidatorTool(BaseTool):
         for item in valid_items
       )
 
-      return OrderValidationResult(
+      result = OrderValidationResult(
         status=Status.SUCCESS,
-        response=f"The requested order of {items_summary}, will cost ${total_price:.2f} and can be prepared in approximately {prep_time} minutes. Inform the user of this and request their confirmation to place this order.",
+        response=f"The requested order of {items_summary}, will cost {total_price} and can be prepared in approximately {prep_time} minutes. Inform the user of this and request their confirmation to place this order.",
         details=details,
         total_price=total_price,
         preparation_time=prep_time,
+      )
+      # Order validated, so update validated_order
+      return Command(
+        update={
+          "validated_order": order,
+          "validation_result": result,
+          "messages": [
+            ToolMessage(content=result.model_dump_json(indent=2), tool_call_id=tool_call_id)
+          ]
+        }
       )
     else:
       # Error path
@@ -190,14 +204,19 @@ class OrderValidatorTool(BaseTool):
       if invalid_items:
         error_messages.append("Some requested items cannot be prepared")
         error_resolutions.append("clarify the items they would like to order")
-      return OrderValidationResult(
+      result = OrderValidationResult(
         status=Status.ERROR,
         response=f"{'. '.join(error_messages)}. Please ask the user to {'and '.join(error_resolutions)}.",
         details=details,
         total_price=None,
         preparation_time=None,
       )
-
-  async def _arun(self, order: Order) -> OrderValidationResult:
-    """Async implementation of run."""
-    return self._run(order)
+      # Order not validated, so don't update validated_order
+      return Command(
+        update={
+          "validation_result": result,
+          "messages": [
+            ToolMessage(content=result.model_dump_json(indent=2), tool_call_id=tool_call_id)
+          ]
+        }
+      )

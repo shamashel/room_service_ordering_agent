@@ -6,18 +6,18 @@
     "valid_items": [
       {
       "name": "Club Sandwich",
-      "modifications": ["extra bacon"],
-      "quantity": 1
+      "valid_modifications": ["extra bacon"],
+      "valid_quantity": 1
       },
       {
       "name": "Still Water",
-      "modifications": [],
-      "quantity": 2
+      "valid_modifications": [],
+      "valid_quantity": 2
       },
       {
       "name": "Apple Pie",
-      "modifications": [],
-      "quantity": 1
+      "valid_modifications": [],
+      "valid_quantity": 1
       }
     ]
   }

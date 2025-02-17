@@ -6,33 +6,30 @@
     "valid_items": [
       {
       "name": "Apple Pie",
-      "modifications": [],
-      "quantity": 1
+      "valid_modifications": [],
+      "valid_quantity": 1
       }
     ],
     "invalid_items": [
       {
         "name": "Mega Ultra Deluxe Pizza",
-        "modifications": ["make it as extra as possible"],
-        "quantity": 1,
         "reason": "Item is not on the menu"
       },
       {
         "name": "Still Water",
-        "modifications": ["add ice"],
-        "quantity": 1,
+        "invalid_modifications": ["add ice"],
+        "valid_quantity": 1,
         "reason": "This item does not allow modifications"
       },
       {
-      "name": "Club Sandwich",
-      "modifications": ["double chicken"],
-      "quantity": 1,
-      "reason": "This modification does not exist for this item"
+        "name": "Club Sandwich",
+        "invalid_modifications": ["double chicken"],
+        "reason": "This modification does not exist for this item"
       },
       {
         "name": "Caesar Salad",
-        "modifications": ["add chicken"],
-        "quantity": 2,
+        "valid_quantity": 1,
+        "invalid_quantity": 2,
         "reason": "Item is currently out of stock"
       }
     ]

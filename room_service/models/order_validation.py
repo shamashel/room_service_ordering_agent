@@ -29,7 +29,7 @@ class InvalidItem(BaseModel):
     valid_quantity: Optional[int] = Field(default=None, gt=0, description="Quantity of the item that is valid")
     # -------------------- #
     # New Fields #
-    reason: str = Field(..., description="Reason why the item is invalid")
+    reason: InvalidItemReasons = Field(..., description="Reason why the item is invalid")
     invalid_modifications: Optional[list[str]] = Field(default_factory=list, description="List of modifications that are invalid")
     invalid_quantity: Optional[int] = Field(default=None, gt=0, description="Quantity of the item that goes over what we have in stock")
     # -------------------- #
