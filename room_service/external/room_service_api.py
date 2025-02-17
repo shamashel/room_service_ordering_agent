@@ -50,7 +50,6 @@ class RoomServiceAPI:
     if self._simulate_failures and random.random() < 0.05:
       raise KitchenOverloadedError("Kitchen is currently at capacity. Please try again in 15 minutes.")
 
-  @pydantic.validate_call
   def place_order(self, order: Order) -> OrderResponse:
     """Place a room service order.
     
