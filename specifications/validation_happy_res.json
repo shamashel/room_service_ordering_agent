@@ -1,0 +1,24 @@
+{
+  "status": "Success",
+  "response": "The requested order of 1 Club Sandwich with extra bacon, 2 Still Water, and 1 Apple Pie, will cost $31.00 and can be prepared in approximately 20 minutes. Inform the user of this and request their confirmation to place this order.",
+  "details": {
+    "valid_room": "312",
+    "valid_items": [
+      {
+      "name": "Club Sandwich",
+      "modifications": ["extra bacon"],
+      "quantity": 1
+      },
+      {
+      "name": "Still Water",
+      "modifications": [],
+      "quantity": 2
+      },
+      {
+      "name": "Apple Pie",
+      "modifications": [],
+      "quantity": 1
+      }
+    ]
+  }
+}

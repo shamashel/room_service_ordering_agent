@@ -1,0 +1,18 @@
+---
+description: Python Rules
+globs: *.py
+---
+# Dependency Information
+
+- Assume Pydantic v2 is being used. 
+- Assume LangChain and LangGraph are being used.
+
+# General Python Rules
+
+- Prioritize readability above all else. Rely on the human in the loop to provide optimizations as needed.
+- Always import the fully qualified path.
+- Suggest builtins and commonly used libraries over bespoke implementations of common algorithms.
+- Always prefer builtins over `typings` imports.
+  - For example, `list` over `List`, `dict` over `Dict`, `tuple` over `Tuple`, `X | Y` over `Union[X, Y]`, etc.
+  - The only exception to this rule is that `Optional` is better than `| None`, as it's easier to read.
+- Always indent with 2 spaces

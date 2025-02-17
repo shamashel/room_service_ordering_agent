@@ -1,0 +1,40 @@
+{
+  "status": "Error",
+  "response": "Room number is invalid. Some requested items cannot be prepared. Please ask the user to clarify the room number and the items they would like to order.",
+  "details": {
+    "invalid_room": "9999",
+    "valid_items": [
+      {
+      "name": "Apple Pie",
+      "modifications": [],
+      "quantity": 1
+      }
+    ],
+    "invalid_items": [
+      {
+        "name": "Mega Ultra Deluxe Pizza",
+        "modifications": ["make it as extra as possible"],
+        "quantity": 1,
+        "reason": "Item is not on the menu"
+      },
+      {
+        "name": "Still Water",
+        "modifications": ["add ice"],
+        "quantity": 1,
+        "reason": "This item does not allow modifications"
+      },
+      {
+      "name": "Club Sandwich",
+      "modifications": ["double chicken"],
+      "quantity": 1,
+      "reason": "This modification does not exist for this item"
+      },
+      {
+        "name": "Caesar Salad",
+        "modifications": ["add chicken"],
+        "quantity": 2,
+        "reason": "Item is currently out of stock"
+      }
+    ]
+  }
+}
