@@ -13,6 +13,25 @@ This was built as part of a coding challenge for [Clara AI](https://claralabs.co
 - `pyproject.toml`: Project configuration file.
 - `specifications/`: A directory containing the original challenge requirements, a flow diagram, and example validation paths
 
+## Prerequisites
+
+- Python 3.12+
+- [Poetry](https://python-poetry.org/) (Ensure you have Poetry installed)
+
+## Installation
+
+Clone the repository and install the dependencies with Poetry:
+
+```bash
+git clone https://github.com/yourusername/room-service-ordering-agent.git
+cd room-service-ordering-agent
+poetry install
+```
+
+## Environment Variables
+
+Only one environment variable is required, `OPENAI_API_KEY`. This can be set in the `.env` file, see the `.env.example` file for an example.
+
 ## Running the Application
 
 To start the Room Service Ordering Agent, run:
