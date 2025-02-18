@@ -26,8 +26,6 @@ This was built as part of a coding challenge for [Clara AI](https://claralabs.co
 Clone the repository and install the dependencies with Poetry:
 
 ```bash
-git clone https://github.com/yourusername/room-service-ordering-agent.git
-cd room-service-ordering-agent
 poetry install
 ```
 
