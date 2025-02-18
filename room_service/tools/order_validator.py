@@ -103,7 +103,6 @@ class OrderValidatorTool(BaseTool):
         InvalidItem(
           name=item.name,
           valid_quantity=item.quantity,
-          valid_modifications=[],
           invalid_modifications=item.modifications,
           reason=InvalidItemReason.MODIFICATIONS_NOT_ALLOWED,
         ),

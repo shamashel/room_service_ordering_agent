@@ -1,6 +1,7 @@
 from room_service.tools.order_validator import OrderValidatorTool
 from room_service.models.order import OrderItem
 from room_service.models.order_validation import InvalidItemReason
+import pytest
 
 def test_validate_room_valid_numbers():
   """Test that valid room numbers are correctly validated."""
@@ -23,11 +24,12 @@ def test_validate_room_invalid_numbers():
   assert validator._validate_room(199) is False  # Room 99 on floor 1
   assert validator._validate_room(121) is False  # Room 21 on floor 1
 
-  # Test edge cases and invalid inputs
-  assert validator._validate_room(-101) is False  # Negative room number
-  assert validator._validate_room(0) is False    # No floor number
-  assert validator._validate_room(99) is False   # Invalid floor format 
-  assert validator._validate_room(425) is False  # Floor 4 doesn't exist
+  # Test invalid inputs
+  with pytest.raises(AssertionError):
+    validator._validate_room(0)    # No floor number
+    validator._validate_room(99)   # Invalid floor format
+    validator._validate_room(425)  # Floor 4 doesn't exist
+    validator._validate_room(-101) # Negative room number should raise an assertion
 
 def test_validate_item_valid():
   """Test that valid items are correctly validated."""

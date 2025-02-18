@@ -10,7 +10,7 @@ from room_service.models.order import OrderItem
 class ValidItem(BaseModel):
     """Represents a validated order item."""
     name: str = Field(..., description="Name of the menu item")
-    valid_modifications: list[str] = Field(default_factory=list, description="List of modifications")
+    valid_modifications: list[str] = Field(default_factory=[], description="List of modifications")
     valid_quantity: int = Field(..., description="Quantity of the item")
 
 class InvalidItemReason(str, Enum):
@@ -26,12 +26,12 @@ class InvalidItem(BaseModel):
     This does not inherit from ValidationItem because it's possible no valid modifications and quanitity are present."""
     # ValidationItem fields #
     name: str = Field(..., description="Name of the menu item")
-    valid_modifications: Optional[list[str]] = Field(default_factory=list, description="List of modifications that are valid")
+    valid_modifications: Optional[list[str]] = Field(default=None, description="List of modifications that are valid")
     valid_quantity: Optional[int] = Field(default=None, description="Quantity of the item that is valid")
     # -------------------- #
     # New Fields #
     reason: InvalidItemReason = Field(..., description="Reason why the item is invalid")
-    invalid_modifications: Optional[list[str]] = Field(default_factory=list, description="List of modifications that are invalid")
+    invalid_modifications: Optional[list[str]] = Field(default=None, description="List of modifications that are invalid")
     invalid_quantity: Optional[int] = Field(default=None, description="Quantity of the item that goes over what we have in stock")
     # -------------------- #
 
