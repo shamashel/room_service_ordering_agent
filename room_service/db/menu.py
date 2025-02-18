@@ -179,4 +179,6 @@ MENU_ITEMS: dict[str, MenuItem] = {
   ),
 }
 
-MENU_ITEMS_STRING = json.dumps({key: item.model_dump_json() for key, item in MENU_ITEMS.items()})
+def get_menu_items_string():
+  """Get a string representation of the menu items."""
+  return json.dumps({key: item.model_dump_json() for key, item in MENU_ITEMS.items()})

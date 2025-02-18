@@ -45,7 +45,7 @@ class RoomServiceAPI:
     if self._simulate_failures and random.random() < 0.1:
       raise RoomServiceAPIError("Failed to connect to Room Service API")
     
-    # Simulate kitchen overload
+    # Simulate kitchen overload, couldn't come up with a better "valid" error reason, feel free to roast me
     if self._simulate_failures and random.random() < 0.05:
       raise KitchenOverloadedError("Kitchen is currently at capacity. Please try again in 15 minutes.")
 

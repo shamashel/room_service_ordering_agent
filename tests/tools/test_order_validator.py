@@ -1,6 +1,6 @@
 from room_service.tools.order_validator import OrderValidatorTool
 from room_service.models.order import OrderItem
-from room_service.models.order_validation import InvalidItemReasons
+from room_service.models.order_validation import InvalidItemReason
 
 def test_validate_room_valid_numbers():
   """Test that valid room numbers are correctly validated."""
@@ -62,7 +62,7 @@ def test_validate_item_not_on_menu():
   assert result.valid_item is None
   assert result.invalid_item is not None
   assert result.invalid_item.name == "InvalidItem"
-  assert result.invalid_item.reason == InvalidItemReasons.NOT_ON_MENU
+  assert result.invalid_item.reason == InvalidItemReason.NOT_ON_MENU
 
 def test_validate_item_invalid_quantity():
   """Test validation of items with invalid quantities."""
@@ -74,7 +74,7 @@ def test_validate_item_invalid_quantity():
   assert result.valid_item is None
   assert result.invalid_item is not None
   assert result.invalid_item.name == "French Fries"
-  assert result.invalid_item.reason == InvalidItemReasons.OUT_OF_STOCK
+  assert result.invalid_item.reason == InvalidItemReason.OUT_OF_STOCK
   assert result.invalid_item.valid_quantity == 5  # French Fries has available_quantity=5
 
 def test_validate_item_modifications_not_allowed():
@@ -90,7 +90,7 @@ def test_validate_item_modifications_not_allowed():
   assert result.invalid_item is not None
   assert result.invalid_item.name == "Still Water"
   assert result.invalid_item.valid_quantity == 1
-  assert result.invalid_item.reason == InvalidItemReasons.MODIFICATIONS_NOT_ALLOWED
+  assert result.invalid_item.reason == InvalidItemReason.MODIFICATIONS_NOT_ALLOWED
   assert result.invalid_item.valid_modifications is None
   assert result.invalid_item.invalid_modifications is not None
   assert set(result.invalid_item.invalid_modifications) == {"extra ice"}
@@ -108,6 +108,6 @@ def test_validate_item_invalid_modifications():
   assert result.invalid_item is not None
   assert result.invalid_item.name == "Club Sandwich"
   assert result.invalid_item.valid_quantity == 1
-  assert result.invalid_item.reason == InvalidItemReasons.INVALID_MODIFICATIONS
+  assert result.invalid_item.reason == InvalidItemReason.INVALID_MODIFICATIONS
   assert result.invalid_item.invalid_modifications is not None
   assert set(result.invalid_item.invalid_modifications) == {"add pineapple"}

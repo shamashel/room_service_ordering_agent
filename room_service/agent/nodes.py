@@ -3,10 +3,15 @@ import logging
 from langchain_core.messages import AIMessage, ToolMessage
 from langgraph.graph import END
 from langgraph.types import Command
-from room_service.agent.chat import TOOL_CALLING_LLM
+from room_service.agent.chat import get_base_llm
 from room_service.models.state import OrderState
-from room_service.tools import get_tool_by_name
+from room_service.tools import TOOLS, get_tool_by_name
 from langgraph.prebuilt.tool_node import _get_state_args
+
+
+
+# Make a new LLM with tools injected because I'm paranoid that the underlying `bind` is mutating the base ChatOpenAI object.
+TOOL_CALLING_LLM = get_base_llm().bind_tools(TOOLS)
 
 logger = logging.getLogger(__name__)
 def tool_calling_llm_node(state: OrderState):
@@ -51,7 +56,13 @@ def tool_node(state: OrderState):
   last_message = state["messages"][-1]
   assert isinstance(last_message, AIMessage), "`tool_node` must be called after `llm_call_node`"
   result: list[Command] = []
-  for tool_call in last_message.tool_calls:
+  # Managing 1 tool call at a time for now so we don't have to deal with conflicting results
+  if len(last_message.tool_calls) > 1:
+    for tool_call in last_message.tool_calls:
+      response = Command(update={"messages": [ToolMessage(content="Error: Only one tool call is allowed at a time.", tool_call_id=tool_call["id"])]})
+      result.append(response)
+  else:
+    tool_call = last_message.tool_calls[0]
     tool = get_tool_by_name(tool_call["name"])
     state_args = {var: state for var in _get_state_args(tool)}
     try:

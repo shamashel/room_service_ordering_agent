@@ -5,16 +5,15 @@ from typing import Optional, TypedDict
 from pydantic import BaseModel, Field, field_validator
 
 from room_service.models.general import Status
-
-
+from room_service.models.order import OrderItem
 
 class ValidItem(BaseModel):
     """Represents a validated order item."""
     name: str = Field(..., description="Name of the menu item")
     valid_modifications: list[str] = Field(default_factory=list, description="List of modifications")
-    valid_quantity: int = Field(..., gt=0, description="Quantity of the item")
+    valid_quantity: int = Field(..., description="Quantity of the item")
 
-class InvalidItemReasons(str, Enum):
+class InvalidItemReason(str, Enum):
     """Reasons why an item can be invalid."""
     NOT_ON_MENU = "Item is not on the menu"
     OUT_OF_STOCK = "Item is currently out of stock"
@@ -28,13 +27,19 @@ class InvalidItem(BaseModel):
     # ValidationItem fields #
     name: str = Field(..., description="Name of the menu item")
     valid_modifications: Optional[list[str]] = Field(default_factory=list, description="List of modifications that are valid")
-    valid_quantity: Optional[int] = Field(default=None, gt=0, description="Quantity of the item that is valid")
+    valid_quantity: Optional[int] = Field(default=None, description="Quantity of the item that is valid")
     # -------------------- #
     # New Fields #
-    reason: InvalidItemReasons = Field(..., description="Reason why the item is invalid")
+    reason: InvalidItemReason = Field(..., description="Reason why the item is invalid")
     invalid_modifications: Optional[list[str]] = Field(default_factory=list, description="List of modifications that are invalid")
-    invalid_quantity: Optional[int] = Field(default=None, gt=0, description="Quantity of the item that goes over what we have in stock")
+    invalid_quantity: Optional[int] = Field(default=None, description="Quantity of the item that goes over what we have in stock")
     # -------------------- #
+
+class SingleSuggestion(BaseModel):
+  """A single suggestion for an invalid item."""
+  original_item: InvalidItem = Field(..., description="The original invalid item")
+  suggestion: str = Field(..., description="A human-readable suggestion for the employee to resolve the invalid item")
+  fixed_item: Optional[OrderItem] = Field(default=None, description="An item that applies the suggestion to resolve the invalid item. If no suggestion is possible, this should be None.")
 
 class ValidationDetails(TypedDict):
     """TypedDict representing successful validation details."""
@@ -47,6 +52,7 @@ class ValidationError(TypedDict):
     valid_items: list[ValidItem]
     invalid_room: Optional[str]
     invalid_items: list[InvalidItem]
+    suggestions: Optional[list[SingleSuggestion]]
 
 class OrderValidationResult(BaseModel):
     """Represents the validation result of an order."""

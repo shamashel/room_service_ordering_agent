@@ -1,9 +1,16 @@
 import textwrap
 from langchain_openai import ChatOpenAI
-from room_service.tools import TOOLS
 from room_service.env import ENV
-from room_service.db.menu import MENU_ITEMS_STRING
-TOOL_CALLING_LLM = ChatOpenAI(model="gpt-4o-mini", api_key=ENV.OPENAI_API_KEY).bind_tools(TOOLS)
+from room_service.db.menu import get_menu_items_string
+
+
+def get_base_llm():
+  """Get the base LLM. Currently, that's just gpt-4o-mini, but we're not doing anything really OpenAI-specific here.
+
+  Returns:
+    ChatOpenAI: The base LLM
+  """
+  return ChatOpenAI(model="gpt-4o-mini", api_key=ENV.OPENAI_API_KEY)
 
 SYSTEM_PROMPT = textwrap.dedent(f"""
   You are a senior room service attendant at a 5-star hotel. You are responsible for taking orders from guests and ensuring they are processed correctly.
@@ -16,6 +23,6 @@ SYSTEM_PROMPT = textwrap.dedent(f"""
 
   For reference, here is the current menu:
   <menu>
-  {MENU_ITEMS_STRING}
+  {get_menu_items_string()}
   </menu>
 """)

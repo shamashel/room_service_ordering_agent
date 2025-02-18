@@ -27,14 +27,23 @@ class OrderPlacerTool(BaseTool):
 
   def __init__(self):
     super().__init__()
-  
+
   def _run(self, tool_call_id: Annotated[str, InjectedToolCallId], state: Annotated[OrderState, InjectedState]) -> Command:
-    logger.info("Attempting to place order")
+    """Run order placement.
+
+    Args:
+      tool_call_id: The tool call ID
+      state: The state of the order
+
+    Returns:
+      Command: A command to update the state with the order placement result
+    """
+    logger.info(f"Attempting to place order for tool call id: {tool_call_id}")
     validated_order, validation_result = state.get("validated_order"), state.get("validation_result")
     if not validated_order or not validation_result:
       raise ValueError("Cannot place order - no validated order in state. Ensure the order has been validated with the `order_validator` tool.")
-      
-    logger.info(f"Placing order: {validated_order}")
+
+    logger.info(f"Placing order for tool call id {tool_call_id}: {validated_order}")
     result = self.api.place_order(validated_order)
     if isinstance(result, GoodOrderResponse):
       return Command(
